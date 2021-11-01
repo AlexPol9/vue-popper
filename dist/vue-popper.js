@@ -2,9 +2,9 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('popper.js')) :
   typeof define === 'function' && define.amd ? define(['popper.js'], factory) :
   (global = global || self, global.VuePopper = factory(global.Popper));
-}(this, function (Popper) { 'use strict';
+}(this, (function (Popper) { 'use strict';
 
-  Popper = Popper && Popper.hasOwnProperty('default') ? Popper['default'] : Popper;
+  Popper = Popper && Object.prototype.hasOwnProperty.call(Popper, 'default') ? Popper['default'] : Popper;
 
   //
 
@@ -87,7 +87,8 @@
       rootClass: {
         type: String,
         "default": ''
-      }
+      },
+      parentSelector: String
     },
     data: function data() {
       return {
@@ -136,6 +137,7 @@
     created: function created() {
       this.appendedArrow = false;
       this.appendedToBody = false;
+      this.parentElement = null;
       this.popperOptions = Object.assign(this.popperOptions, this.options);
     },
     mounted: function mounted() {
@@ -146,6 +148,7 @@
         case 'clickToOpen':
           on(this.referenceElm, 'click', this.doShow);
           on(document, 'click', this.handleDocumentClick);
+          on(document, 'touchstart', this.handleDocumentClick);
           break;
 
         case 'click': // Same as clickToToggle, provided for backwards compatibility.
@@ -153,6 +156,7 @@
         case 'clickToToggle':
           on(this.referenceElm, 'click', this.doToggle);
           on(document, 'click', this.handleDocumentClick);
+          on(document, 'touchstart', this.handleDocumentClick);
           break;
 
         case 'hover':
@@ -200,7 +204,10 @@
           this.popperJS = null;
         }
 
-        if (this.appendedToBody) {
+        if (this.parentElement) {
+          this.parentElement.removeChild(this.popper.parentElement);
+          this.parentElement = null;
+        } else if (this.appendedToBody) {
           this.appendedToBody = false;
           document.body.removeChild(this.popper.parentElement);
         }
@@ -213,7 +220,13 @@
             _this.appendArrow(_this.popper);
           }
 
-          if (_this.appendToBody && !_this.appendedToBody) {
+          if (_this.parentSelector) {
+            _this.parentElement = document.querySelector(_this.parentSelector);
+          }
+
+          if (_this.parentElement) {
+            _this.parentElement.appendChild(_this.popper.parentElement);
+          } else if (_this.appendToBody && !_this.appendedToBody) {
             _this.appendedToBody = true;
             document.body.appendChild(_this.popper.parentElement);
           }
@@ -395,54 +408,10 @@
   /* script */
   const __vue_script__ = script;
   // For security concerns, we use only base name in production mode. See https://github.com/vuejs/rollup-plugin-vue/issues/258
-  script.__file = "/Users/user/projects/vue-popper/src/component/popper.js.vue";
+  script.__file = "popper.js.vue";
   /* template */
-  var __vue_render__ = function() {
-    var _vm = this;
-    var _h = _vm.$createElement;
-    var _c = _vm._self._c || _h;
-    return _c(
-      _vm.tagName,
-      { tag: "component" },
-      [
-        _c(
-          "transition",
-          {
-            attrs: {
-              name: _vm.transition,
-              "enter-active-class": _vm.enterActiveClass,
-              "leave-active-class": _vm.leaveActiveClass
-            },
-            on: { "after-leave": _vm.doDestroy }
-          },
-          [
-            _c(
-              "span",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: !_vm.disabled && _vm.showPopper,
-                    expression: "!disabled && showPopper"
-                  }
-                ],
-                ref: "popper",
-                class: _vm.rootClass
-              },
-              [_vm._t("default", [_vm._v(_vm._s(_vm.content))])],
-              2
-            )
-          ]
-        ),
-        _vm._v(" "),
-        _vm._t("reference")
-      ],
-      2
-    )
-  };
+  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c(_vm.tagName,{tag:"component",class:{'popper-active': _vm.showPopper}},[_c('transition',{attrs:{"name":_vm.transition,"enter-active-class":_vm.enterActiveClass,"leave-active-class":_vm.leaveActiveClass},on:{"after-leave":_vm.doDestroy}},[_c('span',{directives:[{name:"show",rawName:"v-show",value:(!_vm.disabled && _vm.showPopper),expression:"!disabled && showPopper"}],ref:"popper",class:_vm.rootClass},[_vm._t("default",[_vm._v(_vm._s(_vm.content))])],2)]),_vm._v(" "),_vm._t("reference")],2)};
   var __vue_staticRenderFns__ = [];
-  __vue_render__._withStripped = true;
 
     /* style */
     const __vue_inject_styles__ = undefined;
@@ -471,4 +440,4 @@
 
   return VuePopper;
 
-}));
+})));
