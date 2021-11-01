@@ -13,7 +13,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./",
-    "build": "rollup -c ./build/rollup.config.js && NODE_ENV=production rollup -c ./build/rollup.config.js",
+    "build:dev": "rollup -c ./build/rollup.config.js --environment INCLUDE_DEPS,BUILD:production",
+    "build:prod": "npm run build:dev --production",
+    "build": "npm run build:dev && npm run build:prod",
     "postinstall": "opencollective-postinstall || true"
   },
   "repository": {

@@ -147,6 +147,7 @@ npm run build
 | stop-propagation    | Boolean   | false                                           |  |
 | prevent-default     | Boolean   | false                                           |  |
 | root-class          | String    | empty                                           | Class name for root element |
+| parentSelector      | String    | empty                                           | Selector to append popper into element (not body) |
 
 
 ## Events
